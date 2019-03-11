@@ -396,6 +396,7 @@ int p_readlink(const char *path, char *buf, size_t bufsiz)
 
 int p_symlink(const char *target, const char *path)
 {
+#ifndef _USING_V110_SDK71_
 	git_win32_path target_w, path_w;
 
 	if (git_win32_path_from_utf8(path_w, path) < 0 ||
@@ -407,6 +408,9 @@ int p_symlink(const char *target, const char *path)
 		return -1;
 
 	return 0;
+#else // SDK71
+    return -1;
+#endif // _USING_V110_SDK71_
 }
 
 struct open_opts {
@@ -610,6 +614,7 @@ static int getfinalpath_w(
 	git_win32_path dest,
 	const wchar_t *path)
 {
+#ifndef _USING_V110_SDK71_
 	HANDLE hFile;
 	DWORD dwChars;
 
@@ -631,6 +636,9 @@ static int getfinalpath_w(
 
 	/* The path may be delivered to us with a namespace prefix; remove */
 	return (int)git_win32_path_remove_namespace(dest, dwChars);
+#else // SDK71
+    return -1;
+#endif // _USING_V110_SDK71_
 }
 
 static int follow_and_lstat_link(git_win32_path path, struct stat* buf)
